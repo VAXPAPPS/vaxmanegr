@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:vaxmanegr/core/constants/app_colors.dart';
 import 'package:vaxmanegr/core/constants/app_strings.dart';
+import 'package:vaxmanegr/venom_layout.dart';
 
 import '../cubit/system_stats_cubit.dart';
 import '../widgets/stats_card.dart';
@@ -22,8 +23,7 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(169, 28, 28, 30),
+    return VenomScaffold(
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +47,7 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                     width: 250,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(172, 44, 44, 46),
+                      // color: const Color.fromARGB(172, 44, 44, 46),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: TextField(
