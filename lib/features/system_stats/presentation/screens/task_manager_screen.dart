@@ -32,16 +32,6 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  Expanded(
-                    child: Text(
-                      AppStrings.appTitle,
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
                   SizedBox(width: 16),
                   Container(
                     width: 250,

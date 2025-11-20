@@ -6,7 +6,6 @@ import 'package:window_size/window_size.dart';
 import 'features/system_stats/data/repositories/system_stats_repository.dart';
 import 'features/system_stats/presentation/cubit/system_stats_cubit.dart';
 import 'features/system_stats/presentation/screens/task_manager_screen.dart';
-import 'core/constants/app_strings.dart';
 
 Future<void> main() async {
   // Initialize Flutter bindings first to ensure the binary messenger is ready
@@ -44,7 +43,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: AppStrings.appTitle,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.transparent,
         brightness: Brightness.dark,

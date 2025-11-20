@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:vaxmanegr/core/constants/app_colors.dart';
 
-
 class ProcessActionSheet extends StatelessWidget {
   final VoidCallback onKill;
   final VoidCallback onShowLog;
@@ -19,55 +18,122 @@ class ProcessActionSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassmorphicContainer(
       width: double.infinity,
-      height: 220,
-      borderRadius: 24,
-      blur: 24,
+      height: 240, // زيادة الارتفاع قليلاً لاستيعاب التصميم الجديد
+      borderRadius: 30, // زوايا أكثر استدارة
+      blur: 30,
       alignment: Alignment.center,
       border: 1.5,
       linearGradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          AppColors.glassLight.withOpacity(0.25),
-          AppColors.glassDark.withOpacity(0.25),
+          const Color(0xFF1A1B26).withOpacity(0.6), // لون خلفية فيتوم
+          const Color(0xFF1A1B26).withOpacity(0.3),
         ],
       ),
       borderGradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          AppColors.accent.withOpacity(0.4),
-          AppColors.ramColor.withOpacity(0.2),
+          AppColors.accent.withOpacity(0.5),
+          AppColors.accent.withOpacity(0.1),
         ],
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _ActionTile(
-                icon: Icons.delete_forever_rounded,
-                iconColor: Colors.redAccent,
-                title: 'Kill Process',
-                titleColor: Colors.redAccent,
-                onTap: onKill,
+              // شريط علوي صغير للدلالة على السحب
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-              const SizedBox(height: 8),
-              _ActionTile(
-                icon: Icons.visibility_rounded,
-                iconColor: AppColors.accent,
-                title: 'Show Log',
-                titleColor: AppColors.textPrimary,
-                onTap: onShowLog,
+              const Spacer(),
+              
+              // الصف الأول: العمليات المساعدة (Log + Restart)
+              Row(
+                children: [
+                  Expanded(
+                    child: _TacticalButton(
+                      title: 'View Logs',
+                      icon: Icons.terminal_rounded,
+                      color: Colors.cyanAccent,
+                      onTap: onShowLog,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _TacticalButton(
+                      title: 'Restart',
+                      icon: Icons.refresh_rounded,
+                      color: Colors.amberAccent,
+                      onTap: onRestart,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              _ActionTile(
-                icon: Icons.restart_alt_rounded,
-                iconColor: AppColors.diskColor,
-                title: 'Restart',
-                titleColor: AppColors.diskColor,
-                onTap: onRestart,
+              
+              const SizedBox(height: 12),
+              
+              // الصف الثاني: زر القتل (الخطر)
+              _KillButton(onTap: onKill),
+              
+              const Spacer(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// زر العمليات العادية (بتصميم زجاجي خفيف)
+class _TacticalButton extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _TacticalButton({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withOpacity(0.3), width: 1),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: color, size: 24),
+              const SizedBox(height: 4),
+              Text(
+                title,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
               ),
             ],
           ),
@@ -77,48 +143,56 @@ class ProcessActionSheet extends StatelessWidget {
   }
 }
 
-class _ActionTile extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String title;
-  final Color titleColor;
+// زر القتل المخصص (بتصميم عدواني)
+class _KillButton extends StatelessWidget {
   final VoidCallback onTap;
 
-  const _ActionTile({
-    required this.icon,
-    required this.iconColor,
-    required this.title,
-    required this.titleColor,
-    required this.onTap,
-  });
+  const _KillButton({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(16),
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.cardBackground.withOpacity(0.7),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        child: Row(
-          children: [
-            Icon(icon, color: iconColor, size: 28),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                title,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        splashColor: Colors.redAccent.withOpacity(0.4),
+        child: Container(
+          height: 65,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.red.withOpacity(0.2),
+                Colors.redAccent.withOpacity(0.1),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.redAccent.withOpacity(0.5), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.redAccent.withOpacity(0.1),
+                blurRadius: 12,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.dangerous_outlined, color: Colors.redAccent, size: 28), // جمجمة/خطر
+              const SizedBox(width: 12),
+              const Text(
+                'TERMINATE PROCESS', // لغة عسكرية/تقنية
                 style: TextStyle(
-                  color: titleColor,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.2,
+                  color: Colors.redAccent,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

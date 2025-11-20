@@ -1,7 +1,4 @@
-class AppStrings {
-  // App Title
-  static const String appTitle = 'Task Manager';
-  
+class AppStrings {  
   // Main Screen
   static const String processes = 'Processes';
   static const String search = 'Search processes...';
