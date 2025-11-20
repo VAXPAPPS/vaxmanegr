@@ -1,16 +1,20 @@
 import 'dart:ui'; // مهم للـ ImageFilter
 import 'package:flutter/material.dart';
+import 'package:vaxmanegr/core/constants/app_colors.dart';
+import 'package:vaxmanegr/core/constants/app_strings.dart';
 import 'package:window_manager/window_manager.dart';
 
 // 1. هذا هو الـ Layout الرئيسي الذي ستستخدمه في تطبيقك
 class VenomScaffold extends StatefulWidget {
   final Widget body; // محتوى الصفحة (الإعدادات)
   final String title;
+  final ValueChanged<String>? onSearchChanged;
 
   const VenomScaffold({
     Key? key,
     required this.body,
     this.title = "VaxManager",
+    this.onSearchChanged,
   }) : super(key: key);
 
   @override
@@ -68,6 +72,7 @@ class _VenomScaffoldState extends State<VenomScaffold> {
             right: 0,
             child: VenomAppbar(
               title: widget.title,
+              onSearchChanged: widget.onSearchChanged,
               // تمرير دالة للتحكم في البلور عند لمس الأزرار
               onHoverEnter: () => _setBlur(true),
               onHoverExit: () => _setBlur(false),
@@ -84,12 +89,14 @@ class VenomAppbar extends StatelessWidget {
   final String title;
   final VoidCallback onHoverEnter;
   final VoidCallback onHoverExit;
+  final ValueChanged<String>? onSearchChanged;
 
   const VenomAppbar({
     Key? key,
     required this.title,
     required this.onHoverEnter,
     required this.onHoverExit,
+    this.onSearchChanged,
   }) : super(key: key);
 
   @override
@@ -119,6 +126,30 @@ class VenomAppbar extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(width: 50),
+            if (onSearchChanged != null)
+              Container(
+                width: 250,
+                height:40,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(134, 94, 94, 94),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: TextField(
+                  style: TextStyle(color: AppColors.textPrimary),
+                  textAlignVertical: TextAlignVertical.top,
+                  decoration: InputDecoration(
+                    hintText: AppStrings.search,
+                    hintStyle: TextStyle(color: AppColors.textSecondary),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(horizontal:12, vertical: 10),
+                    prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
+                  ),
+                  onChanged: (value) {
+                    onSearchChanged!(value.trim());
+                  },
+                ),
+              ),
             const Spacer(),
 
             // مجموعة الأزرار

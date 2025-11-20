@@ -24,41 +24,15 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
   @override
   Widget build(BuildContext context) {
     return VenomScaffold(
+      onSearchChanged: (query) {
+        setState(() {
+          _searchQuery = query;
+        });
+      },
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  SizedBox(width: 16),
-                  Container(
-                    width: 250,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      // color: const Color.fromARGB(172, 44, 44, 46),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: TextField(
-                      style: TextStyle(color: AppColors.textPrimary),
-                      decoration: InputDecoration(
-                        hintText: AppStrings.search,
-                        hintStyle: TextStyle(color: AppColors.textSecondary),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          _searchQuery = value.trim();
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
             // Stats Grid
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
