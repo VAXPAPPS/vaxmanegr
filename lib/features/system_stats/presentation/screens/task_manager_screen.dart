@@ -52,20 +52,14 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                           unit: AppStrings.percentage,
                           color: AppColors.cpuColor,
                           icon: CupertinoIcons.settings,
-                          child: BlocBuilder<SystemStatsCubit, SystemStatsState>(
-                            builder: (context, state) {
-                              if (state is SystemStatsLoaded) {
-                                return Text(
-                                  state.stats.cpuUsage.toStringAsFixed(1),
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              }
-                              return const Text('0.0');
-                            },
+                          dataPoints: state.cpuHistory,
+                          child: Text(
+                            state.stats.cpuUsage.toStringAsFixed(1),
+                            style: TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         StatsCard(
@@ -74,20 +68,14 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                           unit: AppStrings.percentage,
                           color: AppColors.ramColor,
                           icon: Icons.memory,
-                          child: BlocBuilder<SystemStatsCubit, SystemStatsState>(
-                            builder: (context, state) {
-                              if (state is SystemStatsLoaded) {
-                                return Text(
-                                  state.stats.memoryUsage.toStringAsFixed(1),
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              }
-                              return const Text('0.0');
-                            },
+                          dataPoints: state.memoryHistory,
+                          child: Text(
+                            state.stats.memoryUsage.toStringAsFixed(1),
+                            style: TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         StatsCard(
@@ -96,20 +84,14 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                           unit: AppStrings.networkPerSec,
                           color: AppColors.networkColor,
                           icon: CupertinoIcons.wifi,
-                          child: BlocBuilder<SystemStatsCubit, SystemStatsState>(
-                            builder: (context, state) {
-                              if (state is SystemStatsLoaded) {
-                                return Text(
-                                  '${state.stats.networkDownload.toStringAsFixed(1)}/${state.stats.networkUpload.toStringAsFixed(1)}',
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              }
-                              return const Text('0.0/0.0');
-                            },
+                          dataPoints: state.networkDownloadHistory,
+                          child: Text(
+                            '${state.stats.networkDownload.toStringAsFixed(1)}/${state.stats.networkUpload.toStringAsFixed(1)}',
+                            style: TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         StatsCard(
@@ -118,20 +100,14 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                           unit: AppStrings.megabytesPerSec,
                           color: AppColors.diskColor,
                           icon: CupertinoIcons.folder,
-                          child: BlocBuilder<SystemStatsCubit, SystemStatsState>(
-                            builder: (context, state) {
-                              if (state is SystemStatsLoaded) {
-                                return Text(
-                                  '${state.stats.diskRead.toStringAsFixed(1)} /${state.stats.diskWrite.toStringAsFixed(1)}',
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              }
-                              return const Text('0.0/0.0');
-                            },
+                          dataPoints: state.diskReadHistory,
+                          child: Text(
+                            '${state.stats.diskRead.toStringAsFixed(1)} /${state.stats.diskWrite.toStringAsFixed(1)}',
+                            style: TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
@@ -272,9 +248,9 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                 },
               ),
             ),
-          ],
+          ], )
         ),
-      ),
+      
     );
   }
 }
