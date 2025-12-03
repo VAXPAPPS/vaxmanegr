@@ -122,10 +122,11 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                AppStrings.processes,
+                // AppStrings.processes,
+                'Note: The RAM Usage field is for Flutter applications only; for other applications, their actual usage is shown in the RSS field.',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 20,
+                  color: const Color.fromARGB(255, 58, 255, 189),
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -191,7 +192,7 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'Mem.Used',
+                        'RAM Usage',
                         style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
