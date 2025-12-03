@@ -236,70 +236,77 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                         final process = filtered[index];
                         return GestureDetector(
                           onLongPress: () {
+                            // Save the current context to use after Navigator operations
+                            final parentContext = context;
                             showModalBottomSheet(
                               context: context,
                               backgroundColor: Colors.transparent,
                               builder:
-                                  (context) => ProcessActionSheet(
+                                  (bottomSheetContext) => ProcessActionSheet(
                                     onKill: () async {
-                                      Navigator.pop(context);
+                                      Navigator.pop(bottomSheetContext);
                                       final msg =
                                           await ProcessActions.killProcess(
                                             process.pid,
                                           );
-                                      // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(content: Text(msg)),
-                                      );
+                                      // Use parent context for scaffold messenger
+                                      if (parentContext.mounted) {
+                                        ScaffoldMessenger.of(
+                                          parentContext,
+                                        ).showSnackBar(
+                                          SnackBar(content: Text(msg)),
+                                        );
+                                      }
                                     },
                                     onShowLog: () async {
-                                      Navigator.pop(context);
+                                      Navigator.pop(bottomSheetContext);
                                       final log =
                                           await ProcessActions.showProcessLog(
                                             process.pid,
                                           );
-                                      showDialog(
-                                        // ignore: use_build_context_synchronously
-                                        context: context,
-                                        builder:
-                                            (context) => AlertDialog(
-                                              title: Text(
-                                                'Process ${process.pid} Log',
-                                              ),
-                                              content: SingleChildScrollView(
-                                                child: Text(
-                                                  log,
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
+                                      if (parentContext.mounted) {
+                                        showDialog(
+                                          context: parentContext,
+                                          builder:
+                                              (dialogContext) => AlertDialog(
+                                                title: Text(
+                                                  'Process ${process.pid} Log',
+                                                ),
+                                                content: SingleChildScrollView(
+                                                  child: Text(
+                                                    log,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ),
                                                   ),
                                                 ),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed:
+                                                        () => Navigator.pop(
+                                                          dialogContext,
+                                                        ),
+                                                    child: const Text('Close'),
+                                                  ),
+                                                ],
                                               ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed:
-                                                      () => Navigator.pop(
-                                                        context,
-                                                      ),
-                                                  child: const Text('Close'),
-                                                ),
-                                              ],
-                                            ),
-                                      );
+                                        );
+                                      }
                                     },
                                     onRestart: () async {
-                                      Navigator.pop(context);
+                                      Navigator.pop(bottomSheetContext);
                                       final msg =
                                           await ProcessActions.restartProcess(
                                             process.pid,
                                           );
-                                      // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(content: Text(msg)),
-                                      );
+                                      // Use parent context for scaffold messenger
+                                      if (parentContext.mounted) {
+                                        ScaffoldMessenger.of(
+                                          parentContext,
+                                        ).showSnackBar(
+                                          SnackBar(content: Text(msg)),
+                                        );
+                                      }
                                     },
                                   ),
                             );
