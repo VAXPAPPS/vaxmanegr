@@ -13,10 +13,16 @@ class SystemStatsRepository {
       final File statFile = File('/proc/stat');
       final List<String> lines = await statFile.readAsLines();
       final String cpuLine = lines.first;
-      final List<String> values = cpuLine.split(RegExp(r'\s+')).where((s) => s.isNotEmpty).skip(1).toList();
-      
-      final List<double> stats = values.map((v) => double.tryParse(v) ?? 0).toList();
-      
+      final List<String> values =
+          cpuLine
+              .split(RegExp(r'\s+'))
+              .where((s) => s.isNotEmpty)
+              .skip(1)
+              .toList();
+
+      final List<double> stats =
+          values.map((v) => double.tryParse(v) ?? 0).toList();
+
       if (_lastCpuStats == null) {
         _lastCpuStats = stats;
         await Future.delayed(const Duration(milliseconds: 100));
@@ -45,10 +51,10 @@ class SystemStatsRepository {
     try {
       final File memFile = File('/proc/meminfo');
       final List<String> lines = await memFile.readAsLines();
-      
+
       int totalKb = 0;
       int availableKb = 0;
-      
+
       for (final line in lines) {
         if (line.startsWith('MemTotal:')) {
           totalKb = int.parse(line.split(RegExp(r'\s+')).elementAt(1));
@@ -56,22 +62,14 @@ class SystemStatsRepository {
           availableKb = int.parse(line.split(RegExp(r'\s+')).elementAt(1));
         }
       }
-      
+
       final double totalMb = totalKb / 1024;
       final double usedMb = (totalKb - availableKb) / 1024;
       final double percentage = (usedMb / totalMb) * 100;
-      
-      return {
-        'total': totalMb,
-        'used': usedMb,
-        'percentage': percentage,
-      };
+
+      return {'total': totalMb, 'used': usedMb, 'percentage': percentage};
     } catch (e) {
-      return {
-        'total': 0.0,
-        'used': 0.0,
-        'percentage': 0.0,
-      };
+      return {'total': 0.0, 'used': 0.0, 'percentage': 0.0};
     }
   }
 
@@ -81,7 +79,7 @@ class SystemStatsRepository {
       final lines = result.outLines.toList(); // Ensure lines is a List
       double diskRead = 0.0;
       double diskWrite = 0.0;
-      
+
       if (lines.length > 3) {
         final stats = lines[3].split(RegExp(r'\s+'));
         if (stats.length > 2) {
@@ -89,16 +87,10 @@ class SystemStatsRepository {
           diskWrite = double.tryParse(stats[3]) ?? 0.0;
         }
       }
-      
-      return {
-        'read': diskRead,
-        'write': diskWrite,
-      };
+
+      return {'read': diskRead, 'write': diskWrite};
     } catch (e) {
-      return {
-        'read': 0.0,
-        'write': 0.0,
-      };
+      return {'read': 0.0, 'write': 0.0};
     }
   }
 
@@ -131,22 +123,16 @@ class SystemStatsRepository {
           final rxDiff = totalRx - (_lastNetworkBytes!['rx'] ?? 0);
           final txDiff = totalTx - (_lastNetworkBytes!['tx'] ?? 0);
           downloadKbps = rxDiff / (elapsed / 1000) / 1024; // KB/s
-          uploadKbps = txDiff / (elapsed / 1000) / 1024;   // KB/s
+          uploadKbps = txDiff / (elapsed / 1000) / 1024; // KB/s
         }
       }
 
       _lastNetworkBytes = {'rx': totalRx, 'tx': totalTx};
       _lastNetworkTime = now;
 
-      return {
-        'upload': uploadKbps,
-        'download': downloadKbps,
-      };
+      return {'upload': uploadKbps, 'download': downloadKbps};
     } catch (e) {
-      return {
-        'upload': 0.0,
-        'download': 0.0,
-      };
+      return {'upload': 0.0, 'download': 0.0};
     }
   }
 
@@ -183,61 +169,77 @@ class SystemStatsRepository {
       for (final line in lines) {
         final parts = line.trim().split(RegExp(r'\s+'));
         if (parts.length < 4) {
-          processes.add(ProcessInfo(
-            name: 'Unknown',
-            pid: 0,
-            cpuUsage: 0.0,
-            memoryUsage: 0.0,
-            ramMb: 0.0,
-          ));
+          processes.add(
+            ProcessInfo(
+              name: 'Unknown',
+              pid: 0,
+              cpuUsage: 0.0,
+              memoryUsage: 0.0,
+              rssMb: 0.0,
+              privateDirtyMb: 0.0,
+              privateCleanMb: 0.0,
+            ),
+          );
           continue;
         }
+
         final pid = int.tryParse(parts[0]) ?? 0;
-        double ramMb = 0.0;
-        // Sum Private_Clean and Private_Dirty from /proc/[pid]/smaps for true private memory
-        bool usedPrivate = false;
+
+        // Initialize memory values
+        double rssMb = 0.0;
+        double privateDirtyMb = 0.0;
+        double privateCleanMb = 0.0;
+
+        // Read memory information from /proc/[pid]/smaps_rollup (faster than smaps)
         try {
-          final smapsFile = File('/proc/$pid/smaps');
-          if (await smapsFile.exists()) {
-            final smapsLines = await smapsFile.readAsLines();
-            int privateKb = 0;
+          final smapsRollupFile = File('/proc/$pid/smaps_rollup');
+          if (await smapsRollupFile.exists()) {
+            final smapsLines = await smapsRollupFile.readAsLines();
+
             for (final sLine in smapsLines) {
-              if (sLine.startsWith('Private_Clean:') || sLine.startsWith('Private_Dirty:')) {
-                final kb = int.tryParse(sLine.split(RegExp(r'\s+'))[1]) ?? 0;
-                privateKb += kb;
-              }
-            }
-            if (privateKb > 0) {
-              ramMb = privateKb / 1024;
-              usedPrivate = true;
-            }
-          }
-        } catch (_) {}
-        // Fallback to VmRSS if private is not available
-        if (!usedPrivate) {
-          try {
-            final statusFile = File('/proc/$pid/status');
-            if (await statusFile.exists()) {
-              final statusLines = await statusFile.readAsLines();
-              for (final sLine in statusLines) {
-                if (sLine.startsWith('VmRSS:')) {
-                  final kb = int.tryParse(sLine.split(RegExp(r'\s+'))[1]) ?? 0;
-                  ramMb = kb / 1024;
-                  break;
+              if (sLine.startsWith('Rss:')) {
+                // Extract RSS value in kB and convert to MB
+                final match = RegExp(r'Rss:\s+(\d+)\s+kB').firstMatch(sLine);
+                if (match != null) {
+                  final kb = int.tryParse(match.group(1) ?? '0') ?? 0;
+                  rssMb = kb / 1024.0;
+                }
+              } else if (sLine.startsWith('Private_Dirty:')) {
+                // Extract Private_Dirty value in kB and convert to MB
+                final match = RegExp(
+                  r'Private_Dirty:\s+(\d+)\s+kB',
+                ).firstMatch(sLine);
+                if (match != null) {
+                  final kb = int.tryParse(match.group(1) ?? '0') ?? 0;
+                  privateDirtyMb = kb / 1024.0;
+                }
+              } else if (sLine.startsWith('Private_Clean:')) {
+                // Extract Private_Clean value in kB and convert to MB
+                final match = RegExp(
+                  r'Private_Clean:\s+(\d+)\s+kB',
+                ).firstMatch(sLine);
+                if (match != null) {
+                  final kb = int.tryParse(match.group(1) ?? '0') ?? 0;
+                  privateCleanMb = kb / 1024.0;
                 }
               }
             }
-          } catch (_) {
-            ramMb = 0.0;
           }
+        } catch (_) {
+          // Process might have died during read, use default values (0.0)
         }
-        processes.add(ProcessInfo(
-          name: parts.sublist(3).join(' '),
-          pid: pid,
-          cpuUsage: double.tryParse(parts[1]) ?? 0.0,
-          memoryUsage: double.tryParse(parts[2]) ?? 0.0,
-          ramMb: ramMb,
-        ));
+
+        processes.add(
+          ProcessInfo(
+            name: parts.sublist(3).join(' '),
+            pid: pid,
+            cpuUsage: double.tryParse(parts[1]) ?? 0.0,
+            memoryUsage: double.tryParse(parts[2]) ?? 0.0,
+            rssMb: rssMb,
+            privateDirtyMb: privateDirtyMb,
+            privateCleanMb: privateCleanMb,
+          ),
+        );
       }
       return processes;
     } catch (e) {

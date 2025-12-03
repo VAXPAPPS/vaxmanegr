@@ -28,10 +28,11 @@ Future<void> main() async {
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowTitle('Vaxmanager');
-    const fixedSize = Size(655, 920);
+    const fixedSize = Size(655, 820);
     setWindowMinSize(fixedSize);
     setWindowMaxSize(fixedSize);
   }
+
 
   runApp(const MyApp());
 }

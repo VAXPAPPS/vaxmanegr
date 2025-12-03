@@ -10,7 +10,7 @@ class GlassCard extends StatelessWidget {
   const GlassCard({
     super.key,
     required this.child,
-    this.height = 120,
+    this.height = 150,
     this.borderColor = AppColors.glassLight,
   });
 
@@ -26,10 +26,7 @@ class GlassCard extends StatelessWidget {
       linearGradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [
-          AppColors.glassLight,
-          AppColors.glassDark,
-        ],
+        colors: [AppColors.glassLight, AppColors.glassDark],
       ),
       borderGradient: LinearGradient(
         begin: Alignment.topLeft,

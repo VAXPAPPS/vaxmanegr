@@ -131,13 +131,103 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
               ),
             ),
             const SizedBox(height: 16),
+            // Header Row for Column Names
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Process Name',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'PID',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'CPU %',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'MEM %',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'RSS',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Mem.Used',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'P.Clean',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
             Expanded(
               child: BlocBuilder<SystemStatsCubit, SystemStatsState>(
                 builder: (context, state) {
                   if (state is SystemStatsLoaded) {
-                    final filtered = _searchQuery.isEmpty
-                        ? state.processes
-                        : state.processes.where((p) => p.name.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+                    final filtered =
+                        _searchQuery.isEmpty
+                            ? state.processes
+                            : state.processes
+                                .where(
+                                  (p) => p.name.toLowerCase().contains(
+                                    _searchQuery.toLowerCase(),
+                                  ),
+                                )
+                                .toList();
                     return ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       itemCount: filtered.length,
@@ -148,42 +238,69 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                             showModalBottomSheet(
                               context: context,
                               backgroundColor: Colors.transparent,
-                              builder: (context) => ProcessActionSheet(
-                                onKill: () async {
-                                  Navigator.pop(context);
-                                  final msg = await ProcessActions.killProcess(process.pid);
-                                  // ignore: use_build_context_synchronously
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(msg)),
-                                  );
-                                },
-                                onShowLog: () async {
-                                  Navigator.pop(context);
-                                  final log = await ProcessActions.showProcessLog(process.pid);
-                                  showDialog(
-                                    // ignore: use_build_context_synchronously
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text('Process ${process.pid} Log'),
-                                      content: SingleChildScrollView(child: Text(log, style: const TextStyle(fontSize: 12))),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(context),
-                                          child: const Text('Close'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                                onRestart: () async {
-                                  Navigator.pop(context);
-                                  final msg = await ProcessActions.restartProcess(process.pid);
-                                  // ignore: use_build_context_synchronously
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(msg)),
-                                  );
-                                },
-                              ),
+                              builder:
+                                  (context) => ProcessActionSheet(
+                                    onKill: () async {
+                                      Navigator.pop(context);
+                                      final msg =
+                                          await ProcessActions.killProcess(
+                                            process.pid,
+                                          );
+                                      // ignore: use_build_context_synchronously
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(content: Text(msg)),
+                                      );
+                                    },
+                                    onShowLog: () async {
+                                      Navigator.pop(context);
+                                      final log =
+                                          await ProcessActions.showProcessLog(
+                                            process.pid,
+                                          );
+                                      showDialog(
+                                        // ignore: use_build_context_synchronously
+                                        context: context,
+                                        builder:
+                                            (context) => AlertDialog(
+                                              title: Text(
+                                                'Process ${process.pid} Log',
+                                              ),
+                                              content: SingleChildScrollView(
+                                                child: Text(
+                                                  log,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed:
+                                                      () => Navigator.pop(
+                                                        context,
+                                                      ),
+                                                  child: const Text('Close'),
+                                                ),
+                                              ],
+                                            ),
+                                      );
+                                    },
+                                    onRestart: () async {
+                                      Navigator.pop(context);
+                                      final msg =
+                                          await ProcessActions.restartProcess(
+                                            process.pid,
+                                          );
+                                      // ignore: use_build_context_synchronously
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(content: Text(msg)),
+                                      );
+                                    },
+                                  ),
                             );
                           },
                           child: Container(
@@ -228,12 +345,44 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                                     ),
                                   ),
                                 ),
+                                // RSS Memory Column
                                 Expanded(
                                   child: Text(
-                                    '${process.ramMb.toStringAsFixed(1)} MB',
+                                    '${process.rssMb.toStringAsFixed(1)}',
+                                    style: TextStyle(
+                                      color: const Color.fromARGB(
+                                        255,
+                                        241,
+                                        34,
+                                        34,
+                                      ),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                // Private Dirty Memory Column
+                                Expanded(
+                                  child: Text(
+                                    '${process.privateDirtyMb.toStringAsFixed(1)}',
+                                    style: TextStyle(
+                                      color: const Color.fromARGB(
+                                        255,
+                                        0,
+                                        255,
+                                        242,
+                                      ),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                // Private Clean Memory Column
+                                Expanded(
+                                  child: Text(
+                                    '${process.privateCleanMb.toStringAsFixed(1)}',
                                     style: TextStyle(
                                       color: AppColors.networkColor,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ),
@@ -248,9 +397,9 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                 },
               ),
             ),
-          ], )
+          ],
         ),
-      
+      ),
     );
   }
 }
