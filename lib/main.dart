@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
       ),
       home: BlocProvider(
         create: (context) => SystemStatsCubit(SystemStatsRepository()),
-        child: const vaxmanegrScreen(),
+        child: const VaxmanegrScreen(),
       ),
     );
   }

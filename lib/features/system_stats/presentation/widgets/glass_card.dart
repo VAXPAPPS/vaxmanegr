@@ -32,10 +32,8 @@ class GlassCard extends StatelessWidget {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          // ignore: deprecated_member_use
-          borderColor.withOpacity(0.5),
-          // ignore: deprecated_member_use
-          borderColor.withOpacity(0.2),
+          borderColor.withValues(alpha: 0.5),
+          borderColor.withValues(alpha: 0.2),
         ],
       ),
       child: child,

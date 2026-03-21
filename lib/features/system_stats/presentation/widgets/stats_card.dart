@@ -129,7 +129,7 @@ class _ChartPainter extends CustomPainter {
     canvas.drawPath(
       path,
       Paint()
-        ..color = color.withOpacity(0.5)
+        ..color = color.withValues(alpha: 0.5)
         ..strokeWidth = 4
         ..style = PaintingStyle.stroke
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
@@ -148,8 +148,8 @@ class _ChartPainter extends CustomPainter {
       Offset(0, 0),
       Offset(0, size.height),
       [
-        color.withOpacity(0.25),
-        color.withOpacity(0.0),
+        color.withValues(alpha: 0.25),
+        color.withValues(alpha: 0.0),
       ],
     );
 

@@ -10,15 +10,14 @@ import '../cubit/system_stats_cubit.dart';
 import '../widgets/stats_card.dart';
 import '../widgets/process_action_sheet.dart';
 
-class vaxmanegrScreen extends StatefulWidget {
-  const vaxmanegrScreen({super.key});
+class VaxmanegrScreen extends StatefulWidget {
+  const VaxmanegrScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _vaxmanegrScreenState createState() => _vaxmanegrScreenState();
+  State<VaxmanegrScreen> createState() => _VaxmanegrScreenState();
 }
 
-class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
+class _VaxmanegrScreenState extends State<VaxmanegrScreen> {
   String _searchQuery = '';
 
   @override
@@ -242,29 +241,30 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                               builder:
                                   (context) => ProcessActionSheet(
                                     onKill: () async {
+                                      final messenger =
+                                          ScaffoldMessenger.of(context);
                                       Navigator.pop(context);
                                       final msg =
                                           await ProcessActions.killProcess(
                                             process.pid,
                                           );
-                                      // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
+                                      if (!context.mounted) return;
+                                      messenger.showSnackBar(
                                         SnackBar(content: Text(msg)),
                                       );
                                     },
                                     onShowLog: () async {
+                                      final navigator = Navigator.of(context);
                                       Navigator.pop(context);
                                       final log =
                                           await ProcessActions.showProcessLog(
                                             process.pid,
                                           );
+                                      if (!context.mounted) return;
                                       showDialog(
-                                        // ignore: use_build_context_synchronously
                                         context: context,
                                         builder:
-                                            (context) => AlertDialog(
+                                          (context) => AlertDialog(
                                               title: Text(
                                                 'Process ${process.pid} Log',
                                               ),
@@ -279,9 +279,7 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                                               actions: [
                                                 TextButton(
                                                   onPressed:
-                                                      () => Navigator.pop(
-                                                        context,
-                                                      ),
+                                                      () => navigator.pop(),
                                                   child: const Text('Close'),
                                                 ),
                                               ],
@@ -289,15 +287,15 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                                       );
                                     },
                                     onRestart: () async {
+                                      final messenger =
+                                          ScaffoldMessenger.of(context);
                                       Navigator.pop(context);
                                       final msg =
                                           await ProcessActions.restartProcess(
                                             process.pid,
                                           );
-                                      // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
+                                      if (!context.mounted) return;
+                                      messenger.showSnackBar(
                                         SnackBar(content: Text(msg)),
                                       );
                                     },
@@ -349,7 +347,7 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                                 // RSS Memory Column
                                 Expanded(
                                   child: Text(
-                                    '${process.rssMb.toStringAsFixed(1)}',
+                                    process.rssMb.toStringAsFixed(1),
                                     style: TextStyle(
                                       color: const Color.fromARGB(
                                         255,
@@ -364,7 +362,7 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                                 // Private Dirty Memory Column
                                 Expanded(
                                   child: Text(
-                                    '${process.privateDirtyMb.toStringAsFixed(1)}',
+                                    process.privateDirtyMb.toStringAsFixed(1),
                                     style: TextStyle(
                                       color: const Color.fromARGB(
                                         255,
@@ -380,7 +378,7 @@ class _vaxmanegrScreenState extends State<vaxmanegrScreen> {
                                 // Private Clean Memory Column
                                 Expanded(
                                   child: Text(
-                                    '${process.privateCleanMb.toStringAsFixed(1)}',
+                                    process.privateCleanMb.toStringAsFixed(1),
                                     style: TextStyle(
                                       color: AppColors.networkColor,
                                       fontSize: 12,
