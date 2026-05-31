@@ -1,0 +1,10 @@
+Package: vaxmanegr
+Version: 0.1.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: libc6, libgcc-s1, libstdc++6, libx11-6, libxcomposite1, libxdamage1, libxext6, libxfixes3, libxrandr2, libxrender1, libxss1, libxtst6, libgl1, libglu1-mesa
+Maintainer: VAXP DEB Converter <vaxp@vaxp.org>
+Description: Flutter application converted to DEB package
+ A Flutter application packaged as a DEB package using VAXP DEB Converter.
+ This package includes all necessary Flutter runtime dependencies.

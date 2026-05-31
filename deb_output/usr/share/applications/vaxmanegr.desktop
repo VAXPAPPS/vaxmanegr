@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=vaxmanegr
+Comment=Flutter Application - vaxmanegr
+Exec=/usr/bin/vaxmanegr
+Icon=/usr/share/icons/hicolor/256x256/apps/vaxmanegr.png
+Terminal=false
+Categories=Utility;Development;

@@ -1,0 +1,21 @@
+#!/bin/bash
+# المسار الأساسي للتطبيق مع الاقتباسات لضمان عمله مع المسافات
+APP_DIR="/usr/share/vaxmanegr"
+
+# إعداد بيئة العمل لمكتبات فلاتر
+export LD_LIBRARY_PATH="$APP_DIR/lib:$LD_LIBRARY_PATH"
+
+# الانتقال إلى مجلد التطبيق
+cd "$APP_DIR"
+
+# التأكد من وجود الملف التنفيذي
+if [ ! -f "./vaxmanegr" ]; then
+    echo "Error: Flutter executable not found: vaxmanegr"
+    exit 1
+fi
+
+# التأكد من أن الملف لديه أذونات التشغيل
+chmod +x "./vaxmanegr"
+
+# تشغيل التطبيق مع تمرير كل المدخلات
+exec "./vaxmanegr" "$@"
